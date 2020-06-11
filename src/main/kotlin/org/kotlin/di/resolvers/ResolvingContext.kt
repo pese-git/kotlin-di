@@ -29,6 +29,24 @@ class ResolvingContext<T>(
         return this
     }
 
+    /**
+     *  Создать резолвер значения
+     */
+    fun <TImpl: T> toValue(value: TImpl): ResolvingContext<T> {
+        val resolver: Resolver<TImpl> = ValueResolver<TImpl>(value)
+        return toResolver<TImpl>(resolver = resolver)
+    }
+
+    /**
+     * Преобразователь в сингелтон
+     */
+    fun <TImpl: T> asSingleton(): ResolvingContext<T> {
+        val resolver: Resolver<TImpl> = SingletonResolver<TImpl>(
+                _decoratedResolver = _resolver as Resolver<TImpl>
+        )
+        return toResolver<TImpl>(resolver = resolver)
+    }
+
     private fun verify() {
         if (_resolver == null) {
             throw RuntimeException("Can\'t resolve T without any resolvers. " +

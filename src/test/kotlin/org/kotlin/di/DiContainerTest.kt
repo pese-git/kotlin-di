@@ -160,6 +160,21 @@ internal class DiContainerTest {
         })
     }
 
+    @Test
+    fun `Test asSingelton`() {
+        val expectedIntValue = 10
+        val containerA = DiContainer()
+        val containerB = DiContainer(containerA)
+
+        containerA.bind<Int>(Int::class)
+                .toValue(expectedIntValue)
+                .asSingleton<Int>()
+
+        expect(expectedIntValue, {
+            containerB.resolve(Int::class)
+        })
+    }
+
 
     private fun <T> makeResolver(expectedValue: T): Resolver<T> {
         val resolver = mockk<Resolver<T>>()
