@@ -6,7 +6,7 @@ package org.kotlin.di.resolvers
  */
 class ValueResolver<T>(
     private val _value: T
-): Resolver<T>() {
+): Resolver<T> {
 
     override fun resolve(): T {
         return _value

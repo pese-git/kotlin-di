@@ -5,7 +5,7 @@ import java.lang.RuntimeException
 
 class ResolvingContext<T>(
         val _container: DiContainer
-) : Resolver<T>() {
+) : Resolver<T> {
     // Корневой резолвер
     private var _resolver: Resolver<*>? = null
 
