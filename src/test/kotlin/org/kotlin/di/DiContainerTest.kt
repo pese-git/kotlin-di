@@ -175,6 +175,43 @@ internal class DiContainerTest {
         })
     }
 
+    @Test
+    fun `Bind to the factory resolves with value`() {
+        val container = DiContainer()
+        val b = B()
+        container.bind<A>(A::class).from {
+            b
+        }
+        expect(b, {
+            container.resolve(A::class)
+        })
+    }
+
+    @Test
+    fun `Bind to the factory1 resolves value with dependency`() {
+        val container = DiContainer()
+        val b = B()
+        container.bind<A>(A::class).toValue(b)
+        container.bind<DependOnA>(DependOnA::class).from1<A> { a ->
+            DependOnA(a)
+        }
+
+        expect(b, {
+            container.resolve<DependOnA>(DependOnA::class).a
+        })
+    }
+
+    @Test
+    fun `Child container can resolve parent container's value`() {
+        val containerA = DiContainer()
+        val b = B()
+        containerA.bind<A>(A::class).toValue(b)
+
+        val containerB = DiContainer(containerA)
+        val containerC = DiContainer(containerB)
+        expect(b, {containerC.resolve<A>(A::class)})
+    }
+
 
     private fun <T> makeResolver(expectedValue: T): Resolver<T> {
         val resolver = mockk<Resolver<T>>()
@@ -182,4 +219,8 @@ internal class DiContainerTest {
         return resolver
     }
 }
+
+internal abstract class A
+internal class B : A()
+internal class DependOnA(val a: A)
 
