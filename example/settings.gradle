@@ -8,3 +8,5 @@
  */
 
 rootProject.name = 'org.kotlin.di.example'
+//include("kotlin-di")
+//project(':kotlin-di').projectDir = new File('../kotlin-di')

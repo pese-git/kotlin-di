@@ -3,13 +3,57 @@
  */
 package org.kotlin.di.example
 
-class App {
-    val greeting: String
-        get() {
-            return "Hello world."
-        }
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.runBlocking
+import org.kotlin.di.DiContainer
+
+
+fun main(args: Array<String>)= runBlocking {
+    val container = DiContainer()
+    container.bind<String>(String::class).toValue("279f7923kf23fs")
+    container.bind<ApiClient>(ApiClient::class).toValue(ApiClientMock())
+    container.bind<DataRepository>(DataRepository::class).from2<String, ApiClient> { it1, it2 ->
+        NetworkDataRepository(
+                token = it1,
+                apiClient = it2
+        )
+    }
+
+    val dataRepository = container.resolve<DataRepository>(DataRepository::class)
+
+    dataRepository.getData().collect {
+        println(it)
+    }
 }
 
-fun main(args: Array<String>) {
-    println(App().greeting)
+interface DataRepository {
+    fun getData(): Flow<String>
+}
+
+class NetworkDataRepository(
+        private val token: String,
+        private val apiClient: ApiClient
+): DataRepository {
+
+    override fun getData(): Flow<String> {
+        return apiClient.sendRequest(
+                url = "www.google.com",
+                token = token,
+                requestBody = mapOf("type" to "string")
+        )
+    }
+}
+
+
+
+interface ApiClient {
+    fun sendRequest(url: String, token: String, requestBody: Map<String, Any>): Flow<String>
+}
+
+class ApiClientMock: ApiClient {
+    override fun sendRequest(url: String, token: String, requestBody: Map<String, Any>): Flow<String> {
+        return flowOf("Answer: $url $token $requestBody")
+    }
 }
