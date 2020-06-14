@@ -179,7 +179,7 @@ internal class DiContainerTest {
     fun `Bind to the factory resolves with value`() {
         val container = DiContainer()
         val b = B()
-        container.bind<A>(A::class).from {
+        container.bind<A>(A::class).toFactory{
             b
         }
         expect(b, {
@@ -192,7 +192,7 @@ internal class DiContainerTest {
         val container = DiContainer()
         val b = B()
         container.bind<A>(A::class).toValue(b)
-        container.bind<DependOnA>(DependOnA::class).from1<A> { a ->
+        container.bind<DependOnA>(DependOnA::class).toFactory1<A> { a ->
             DependOnA(a)
         }
 
