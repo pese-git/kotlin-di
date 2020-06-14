@@ -3,9 +3,7 @@
  */
 package org.kotlin.di.example
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
 import org.kotlin.di.DiContainer
 
@@ -14,7 +12,7 @@ fun main(args: Array<String>)= runBlocking {
     val container = DiContainer()
     container.bind<String>(String::class).toValue("279f7923kf23fs")
     container.bind<ApiClient>(ApiClient::class).toValue(ApiClientMock())
-    container.bind<DataRepository>(DataRepository::class).from2<String, ApiClient> { it1, it2 ->
+    container.bind<DataRepository>(DataRepository::class).toFactory2<String, ApiClient> { it1, it2 ->
         NetworkDataRepository(
                 token = it1,
                 apiClient = it2
