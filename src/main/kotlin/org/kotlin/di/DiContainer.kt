@@ -51,7 +51,7 @@ class DiContainer(
         return if (resolver != null) {
             resolver.resolve() as T?
         } else {
-            _parent?.resolve(cType)
+            _parent?.tryResolve(cType)
         }
     }
 
